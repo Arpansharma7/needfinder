@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect, useState } from "react";
-
+import { Linkedin } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -203,9 +203,22 @@ export default function Home() {
       <footer className="bg-background-dark border-t border-white/10 py-16">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-slate-600 text-sm">© 2026 NeedFinder AI. All rights reserved.</p>
-          <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
-            MADE BY <span className="text-primary headline-font text-lg tracking-widest">ARPAN SHARMA</span>
-          </div>
+            <div className="flex flex-col items-center md:items-end text-slate-500 text-sm font-medium">
+              <div className="flex items-center gap-2">
+                MADE BY <span className="text-primary headline-font text-lg tracking-widest">ARPAN SHARMA</span>
+              </div>
+
+              <a
+                href="https://www.linkedin.com/in/arpan-sharma-b2a353272/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 flex items-center gap-2 text-primary hover:underline text-sm"
+              >
+                <Linkedin size={16} />
+                Connect on LinkedIn
+              </a>
+            </div>
+          
         </div>
       </footer>
     </main>
