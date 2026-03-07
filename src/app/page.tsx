@@ -183,7 +183,7 @@ export default function Home() {
                 <Check className="text-primary w-4 h-4" /> Shared procurement list
               </li>
               <li className="flex items-center gap-3 text-slate-300">
-                <Check className="text-primary w-4 h-4" /> Supports 4 Devices
+                <Check className="text-primary w-4 h-4" /> Supports upto 5 Devices
               </li>
                <li className="flex items-center gap-3 text-slate-300">
                 <Check className="text-primary w-4 h-4" /> Everything in Pro
