@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: theme('colors.background-dark');
+    color: theme('colors.slate.100');
+    font-family: theme('fontFamily.display');
+  }
+}
+
+@layer utilities {
+  .headline-font { font-family: var(--font-bebas-neue), cursive; letter-spacing: 0.05em; }
+  .body-font { font-family: var(--font-space-grotesk), sans-serif; }
+  .ticker {
+      display: flex;
+      overflow: hidden;
+      user-select: none;
+      gap: 2rem;
+  }
+  .ticker-content {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-around;
+      min-width: 100%;
+      gap: 2rem;
+  }
+}
