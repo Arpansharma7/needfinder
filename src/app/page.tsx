@@ -136,7 +136,7 @@ export default function Home() {
             <div className="mb-8"><span className="text-4xl font-black headline-font">₹0</span><span className="text-slate-500 ml-1">/mo</span></div>
             <ul className="space-y-4 mb-12 flex-grow">
               <li className="flex items-center gap-3 text-slate-300">
-                <Check className="text-primary w-4 h-4" /> 5 AI searches / week
+                <Check className="text-primary w-4 h-4" /> 10 AI searches / week
               </li>
               <li className="flex items-center gap-3 text-slate-300">
                 <Check className="text-primary w-4 h-4" /> Basic price comparison
@@ -204,7 +204,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-slate-600 text-sm">© 2026 NeedFinder AI. All rights reserved.</p>
           <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
-            POWERED BY <span className="text-primary headline-font text-lg tracking-widest">team NeedFinder</span>
+            MADE BY <span className="text-primary headline-font text-lg tracking-widest">ARPAN SHARMA</span>
           </div>
         </div>
       </footer>
