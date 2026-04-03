@@ -75,7 +75,7 @@ export default function PricingPage() {
                 <Check className="text-primary w-4 h-4" /> Shared procurement list
               </li>
               <li className="flex items-center gap-3 text-slate-300">
-                <Check className="text-primary w-4 h-4" /> B2B discount finding
+                <Check className="text-primary w-4 h-4" /> better discounts finding
               </li>
                <li className="flex items-center gap-3 text-slate-300">
                 <Check className="text-primary w-4 h-4" /> Everything in Pro
