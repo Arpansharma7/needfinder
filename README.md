@@ -21,6 +21,3 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-## Deployment
-
-This project is ready for Vercel. Add the same environment variables in your Vercel project settings before deploying.
