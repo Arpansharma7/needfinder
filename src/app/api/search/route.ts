@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
-import { redis } from '@/lib/redis';
 import { supabase } from '@/lib/supabase';
 import { parseIntent, rankProducts } from '@/lib/groq';
 import { searchGoogleShopping } from '@/lib/serper';
 import { headers } from 'next/headers';
 import { logger } from '@/lib/logger';
 import { CACHE_TTL, MIN_QUERY_LENGTH, MAX_QUERY_LENGTH, RATE_LIMIT_MAX } from '@/lib/constants';
+import { getCachedValue, incrementRateLimit, setCachedValue } from '@/lib/request-store';
+import type { ProductCard } from '@/types';
 
 export const maxDuration = 30;
 export const dynamic = 'force-dynamic';
@@ -56,44 +57,34 @@ export async function POST(req: Request) {
     const cacheKeyBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(query.toLowerCase()));
     const cacheKey = `search:${Array.from(new Uint8Array(cacheKeyBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')}`;
 
-    const isRedisConfigured = process.env.UPSTASH_REDIS_REST_TOKEN && process.env.UPSTASH_REDIS_REST_TOKEN !== '********';
-
     // Rate Limiting
-    if (isRedisConfigured) {
-      const rateLimitKey = user?.id 
-        ? `ratelimit::user::${user.id}`
-        : `ratelimit::ip::${ipHash}`;
-        
-      const usage = await redis.incr(rateLimitKey);
-      if (usage === 1) {
-        await redis.expire(rateLimitKey, 60 * 60 * 24);
-      }
-      
-      if (usage > RATE_LIMIT_MAX) {
-        return sendError(
-          "You've used your 10 free searches today. Come back tomorrow or upgrade.", 
-          429, 
-          'RATE_LIMITED', 
-          false,
-          { resetsIn: "24 hours" }
-        );
-      }
+    const rateLimitKey = user?.id
+      ? `ratelimit::user::${user.id}`
+      : `ratelimit::ip::${ipHash}`;
+
+    const usage = incrementRateLimit(rateLimitKey, 60 * 60 * 24);
+    if (usage.count > RATE_LIMIT_MAX) {
+      return sendError(
+        `You've used your ${RATE_LIMIT_MAX} free searches today. Come back tomorrow or upgrade.`,
+        429,
+        'RATE_LIMITED',
+        false,
+        { resetsIn: '24 hours' }
+      );
     }
 
     // Cache Check
-    if (isRedisConfigured) {
-      try {
-        const cachedResult = await redis.get(cacheKey);
-        if (cachedResult) {
-          logger.log('Cache hit for query:', query);
-          const response = NextResponse.json({ results: typeof cachedResult === 'string' ? JSON.parse(cachedResult) : cachedResult });
-          response.headers.set('X-Cache', 'HIT');
-          response.headers.set('Cache-Control', `s-maxage=${CACHE_TTL}`);
-          return response;
-        }
-      } catch (cacheErr) {
-        logger.warn('Redis cache read error:', cacheErr);
+    try {
+      const cachedResult = getCachedValue<ProductCard[]>(cacheKey);
+      if (cachedResult) {
+        logger.log('Cache hit for query:', query);
+        const response = NextResponse.json({ results: cachedResult });
+        response.headers.set('X-Cache', 'HIT');
+        response.headers.set('Cache-Control', `s-maxage=${CACHE_TTL}`);
+        return response;
       }
+    } catch (cacheErr) {
+      logger.warn('Local cache read error:', cacheErr);
     }
 
     // Processing Pipeline
@@ -141,9 +132,7 @@ export async function POST(req: Request) {
 
     // Background Saves
     const doBackgroundTasks = async () => {
-      if (isRedisConfigured) {
-        await redis.setex(cacheKey, CACHE_TTL, JSON.stringify(top3)).catch(e => logger.warn('Cache write async error:', e));
-      }
+      setCachedValue(cacheKey, top3, CACHE_TTL);
 
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'unconfigured';
       if (!supabaseUrl.includes('unconfigured-supabase')) {
