@@ -1,6 +1,11 @@
-import { Redis } from '@upstash/redis';
+let redis = null;
 
-export const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || 'https://dummy.upstash.io',
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || 'dummy',
-});
+if (
+  process.env.UPSTASH_REDIS_REST_URL &&
+  process.env.UPSTASH_REDIS_REST_TOKEN
+) {
+  redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+  });
+}
