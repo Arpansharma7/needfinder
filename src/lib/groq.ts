@@ -45,7 +45,7 @@ export async function parseIntent(query: string, attempt: number = 1): Promise<G
         { role: "system", content: INTENT_PARSER_SYSTEM_PROMPT },
         { role: "user", content: query }
       ],
-      model: "llama-3.3-70b-versatile",
+      model: "openai/gpt-oss-20b",
       response_format: { type: "json_object" }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }, { signal: controller.signal as any }); // groq sdk supports fetch options
